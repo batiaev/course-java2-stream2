@@ -16,7 +16,7 @@ import java.util.List;
 @Slf4j
 public class Team {
     private String name;
-    private List<String> members = new ArrayList<>();
+    private List<Member> members = new ArrayList<>();
 
     private void showMembers() {
         if (members == null) {
@@ -24,11 +24,11 @@ public class Team {
         } else if (members.size() == 0) {
             log.warn("Team is empty =/");
         } else {
-            members.forEach(log::info);
+            members.forEach(member -> log.info(member.getName()));
         }
     }
 
     public void showResults() {
-        //FIXME some code
+        members.forEach(member -> log.info("{}: {}", member.getName(), member.getResult()));
     }
 }
