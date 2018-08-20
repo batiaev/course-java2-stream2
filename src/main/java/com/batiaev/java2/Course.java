@@ -18,6 +18,11 @@ public class Course {
     private List<Obstacle> obstacleList = new ArrayList<>();
 
     public void doIt(Team team) {
-        obstacleList.forEach(obstacle -> team.getMembers().forEach(obstacle::overcome));
+        obstacleList.forEach(obstacle -> {
+            team.getMembers().forEach(member -> {
+                /*признаюсь, так себе решение*/
+                member.setResult(obstacle.overcome(member));
+            });
+        });
     }
 }
