@@ -33,12 +33,12 @@ public class Participant {
         return intellect;
     }
 
-    private boolean isSuccessfulFinished;
-    public boolean isSuccessfulFinished() {
-        return isSuccessfulFinished;
+    private boolean isPassing;
+    public boolean isPassing() {
+        return isPassing;
     }
-    public void setSuccessfulFinished(boolean successfulFinished) {
-        isSuccessfulFinished = successfulFinished;
+    public void setPassing(boolean passing) {
+        isPassing = passing;
     }
 
     public Participant(String name){
@@ -47,6 +47,7 @@ public class Participant {
         dexterity = (int) (5 + Math.random() * 10);
         endurance = (int) (5 + Math.random() * 10);
         intellect = (int) (5 + Math.random() * 10);
+        isPassing = true;
     }
     public Participant(String name, int age){
         this(name);
