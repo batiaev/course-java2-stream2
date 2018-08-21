@@ -2,18 +2,11 @@ package com.antipov.homework1;
 
 public class Participant {
     private String name;
-    private int age;
     public String getName() {
         return name;
     }
     public void setName(String name) {
         this.name = name;
-    }
-    public int getAge() {
-        return age;
-    }
-    public void setAge(int age) {
-        this.age = age;
     }
 
     private final int strength;
@@ -48,9 +41,5 @@ public class Participant {
         endurance = (int) (5 + Math.random() * 10);
         intellect = (int) (5 + Math.random() * 10);
         isPassing = true;
-    }
-    public Participant(String name, int age){
-        this(name);
-        this.age = age;
     }
 }
