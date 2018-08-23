@@ -1,4 +1,4 @@
-package com.batiaev.java2;
+package com.batiaev.java2.lesson1;
 
 public class InvestAccount extends Account {
     public InvestAccount(int id) {
