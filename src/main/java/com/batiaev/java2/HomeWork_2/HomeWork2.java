@@ -21,10 +21,10 @@ public class HomeWork2 {
 
     // третий другого размера.
     private static String[][] diffSize = {
-            { "5", "49", "53", "17", "15" },
-            { "56", "44", "65", "d7", "77" },
-            { "91", "9", "a", "57", "18c" },
-            { "h", "27", "32", "8j", "l" }
+            { "5", "53", "17", "8" },
+            { "56", "44", "65", "7"},
+            //{ "91", "9", "18c", "49" },
+            { "4", "27", "32", "52"}
     };
 
     public static void main(String[] args) {
@@ -32,12 +32,16 @@ public class HomeWork2 {
 
         // Блок try/catch  для обработки исключений.
         try {
-            //hm.taking2DArray(diffSize);
-            hm.taking2DArray(numbersAndLetters);
+            hm.taking2DArray(diffSize);
+            //hm.taking2DArray(numbersAndLetters);
             //hm.taking2DArray(numbers);
         } catch (MyArraySizeException | MyArrayDataException e) {
             System.out.println(e);
         }
+    }
+
+    private boolean isAllSizesCorrect(int size) {
+        return size == 4;
     }
 
     // Метод принимающий в качестве аргумента двумерный массив типа String.
@@ -47,12 +51,24 @@ public class HomeWork2 {
 
         int size = s.length;
         int size2 = s[0].length;
-        System.out.println(" size : " + size + " size2: " + size2);
 
         // Проверка размера массива, если размер отличен от ожидаемого,
         // получаем исключение.
-        if (size != 4 || size2 != 4) {
-            throw new MyArraySizeException(Msg.WRONG_SIZE);
+//        if (size != 4 || size2 != 4) {
+//            throw new MyArraySizeException(Msg.WRONG_SIZE);
+//        }
+
+
+        // Исправление:
+        // Проверка размера двумерного массива,
+        // включая возможность не равных вложенных массивов.
+        for (String[] value : s) {
+            for (int a = 0; a < value.length; a++) {
+                if (!isAllSizesCorrect(value.length) || size != 4) {
+                    throw new MyArraySizeException(
+                            String.format(Msg.WRONG_SIZE, size, value.length));
+                }
+            }
         }
 
         int sum = 0;
@@ -71,13 +87,10 @@ public class HomeWork2 {
                     // Если все в порядке, суммируем все цифры и выводим результат.
                     int first = Integer.parseInt(s[i][j]);
                     sum += first;
-                    System.out.println(" sum: " + sum);
                 }
             }
         }
-
-        System.out.println(" Returned correct value ");
-
+        System.out.println(String.format("Sum: %d", sum));
     }
 
     //Метод проверяющий, является ли String цифрой.
