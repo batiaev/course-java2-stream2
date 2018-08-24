@@ -19,11 +19,13 @@ public class Homework_2 {
         try {
             matrix = getArrayFour(strs);
             printArray(matrix);
+            System.out.println(sumArray(matrix));
         } catch (MyArraySizeException ex) {
             System.out.println("Ошибка: \n" + ex);
         } catch (MyArrayDataException exd) {
             System.out.println("Ошибка: \n" + exd);
         }
+
     }
 
     private static void printArray(int[][] matrix) {
@@ -34,6 +36,17 @@ public class Homework_2 {
             }
             System.out.println();
         }
+    }
+
+    private static int sumArray(int[][] matrix) {
+        int sum = 0;
+        for (int[] arr : matrix) {
+            for (int num : arr) {
+                sum += num;
+            }
+            System.out.println();
+        }
+        return sum;
     }
 
     private static int[][] getArrayFour(String[][] arr) throws MyArraySizeException, MyArrayDataException {
