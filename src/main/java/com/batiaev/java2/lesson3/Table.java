@@ -1,4 +1,4 @@
-package com.batiaev.java2.lesson2.lesson3;
+package com.batiaev.java2.lesson3;
 
 public interface Table<T> {
     T get(int row, int column);

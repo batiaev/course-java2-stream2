@@ -1,4 +1,4 @@
-package com.batiaev.java2.lesson2.lesson3;
+package com.batiaev.java2.lesson3;
 
 import java.util.Objects;
 

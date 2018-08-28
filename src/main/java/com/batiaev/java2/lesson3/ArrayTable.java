@@ -1,4 +1,4 @@
-package com.batiaev.java2.lesson2.lesson3;
+package com.batiaev.java2.lesson3;
 
 public class ArrayTable implements Table<Card> {
     private final int DEFAULT_SIZE = 10;
