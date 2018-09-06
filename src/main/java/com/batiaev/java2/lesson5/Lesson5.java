@@ -2,13 +2,24 @@ package com.batiaev.java2.lesson5;
 
 public class Lesson5 {
     public static void main(String[] args) throws InterruptedException {
-        Thread thread = new Thread(Lesson5::process);
-        thread.setName("My custom thread");
-        thread.setPriority(7);
-        thread.start();
-        thread.join();
-        Thread.State state = thread.getState();
-        process();
+//        Thread thread = new Thread(Lesson5::process);
+//        thread.setName("My custom thread");
+//        thread.setPriority(7);
+//        thread.start();
+//        thread.join();
+//        Thread.State state = thread.getState();
+//        process();
+
+        Lesson5 lesson5 = new Lesson5();
+
+        for (int i = 0; i < 1000; i++) {
+            lesson5.example2(true);
+        }
+        new Thread(() -> {
+            for (int i = 0; i < 1000; i++) {
+                lesson5.example2(false);
+            }
+        }).start();
     }
 
     private static void process() {
@@ -26,8 +37,14 @@ public class Lesson5 {
         //FIXME
     }
 
-    private synchronized void example2() {
-        //FIXME
+    private volatile static long counter = 0;
+
+    private synchronized void example2(boolean increase) {
+        if (increase)
+            counter += 2;
+        else
+            counter -= 1;
+        System.out.println("Cur value = " + counter);
     }
 
     private synchronized void example22() {
