@@ -12,7 +12,7 @@ public class HomeWork5 {
     public static void main(String[] args) {
         HomeWork5 hm = new HomeWork5();
 
-        hm.firstMethod();
+        //hm.firstMethod();
         hm.secondMethod();
 
     }
