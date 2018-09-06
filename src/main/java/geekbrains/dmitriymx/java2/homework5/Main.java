@@ -49,6 +49,21 @@ public class Main {
     }
 
     /**
+     * Ожидания завершения активных потоков
+     * @param threadPoolExecutor ThreadPoolExecutor object
+     */
+    private static void waitThreadPool(ThreadPoolExecutor threadPoolExecutor) {
+        while (threadPoolExecutor.getActiveCount() > 0) {
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                log.warn("Interrupted sleep");
+                break;
+            }
+        }
+    }
+
+    /**
      * Второй подход к заполнению массива в несколько потоков
      * @param array произвольный массив float-чисел
      * @param threadCount колличество потоков
@@ -56,20 +71,38 @@ public class Main {
     private static void method2(final float[] array, int threadCount) {
         long saveTime;
         long diffTime;
+        final int[] nextIdx = new int[]{0}; // грязный хак для обхода final ограничений в лямбдах
+        ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(threadCount);
 
         // 1. Заполняем массив единицами
+        Runnable task = () -> {
+            int idx;
+
+            while (true) {
+                synchronized (nextIdx) {
+                    idx = nextIdx[0];
+                    nextIdx[0]++;
+                }
+                if (idx >= array.length) {
+                    break;
+                }
+
+                array[idx] = 1f;
+            }
+        };
         saveTime = System.currentTimeMillis();
-        for (int i = 0; i < array.length; i++) {
-            array[i] = 1f;
+        for(int i = 0; i < threadCount; i++) {
+            threadPool.execute(task);
         }
+        waitThreadPool(threadPool);
         diffTime = System.currentTimeMillis() - saveTime;
         log.info("[{}] 1. Заполнение массива единицами заняло {} ms ({} s)", "Method-2", diffTime, diffTime/1000f);
+        threadPool.shutdown();
 
         // 2. Вычисляем для каждой ячейки новое значение
-        final int[] nextIdx = new int[]{0}; // грязный хак для обхода final ограничений в лямбдах
-
-        ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(threadCount);
-        Runnable task = () -> {
+        threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(threadCount);
+        nextIdx[0] = 0;
+        task = () -> {
             int idx;
 
             while (true) {
@@ -88,18 +121,9 @@ public class Main {
         for(int i = 0; i < threadCount; i++) {
             threadPool.execute(task);
         }
-
-        while (threadPool.getActiveCount() > 0) {
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-                log.warn("Interrupted sleep");
-                break;
-            }
-        }
+        waitThreadPool(threadPool);
         diffTime = System.currentTimeMillis() - saveTime;
         log.info("[{}] 2. Вычисление новых значений для массива заняло {} ms ({} s)", "Method-2", diffTime, diffTime/1000f);
-
         threadPool.shutdown();
     }
 
