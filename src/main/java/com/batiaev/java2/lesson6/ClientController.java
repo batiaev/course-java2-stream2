@@ -3,6 +3,7 @@ package com.batiaev.java2.lesson6;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Random;
 import java.util.Scanner;
 
 public class ClientController implements Controller {
@@ -13,6 +14,7 @@ public class ClientController implements Controller {
     private Socket sock;
     private Scanner in;
     private PrintWriter out;
+    private int index = new Random().nextInt(3) + 1;
 
     public ClientController() {
         initConnection();
@@ -21,6 +23,7 @@ public class ClientController implements Controller {
     public void showUI(ClientUI ui) {
         this.ui = ui;
         ui.showUI();
+        sendMessage("/auth login" + index + " pass" + index);
     }
 
     private void initConnection() {
@@ -54,7 +57,7 @@ public class ClientController implements Controller {
     @Override
     public void closeConnection() {
         try {
-            out.println("end");
+            sendMessage("/exit");
             sock.close();
             out.close();
             in.close();

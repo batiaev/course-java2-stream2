@@ -1,50 +1,85 @@
 package com.batiaev.java2.lesson6;
 
+import com.batiaev.java2.lesson7.AuthService;
+import com.batiaev.java2.lesson7.BaseAuthService;
+
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Server {
-    private static PrintWriter pw;
-    private static Scanner consoleScanner = new Scanner(System.in);
+    private ServerSocket serverSocket;
+    private AuthService authService;
+    private List<ClientHandler> clients = new ArrayList<>();
 
-    public static void main(String[] args) {
-        ServerSocket serv = null;
-        Socket sock;
+    public Server(AuthService authService) {
+        this.authService = authService;
         try {
-            serv = new ServerSocket(8189);
+            serverSocket = new ServerSocket(8189);
             System.out.println("Сервер запущен, ожидаем подключения...");
-            sock = serv.accept();
-            System.out.println("Клиент подключился");
-            Scanner sc = new Scanner(sock.getInputStream());
-            pw = new PrintWriter(sock.getOutputStream(), true);
-            new Thread(() -> scanConsole()).start();
-            while (true) {
-                String str = sc.nextLine();
-                if (str.equals("end")) break;
-                System.out.println("User:" + str);
-                pw.println("User: " + str);
-            }
         } catch (IOException e) {
             System.out.println("Ошибка инициализации сервера");
-        } finally {
+            close();
+        }
+    }
+
+    public void close() {
+        try {
+            serverSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.exit(0);
+    }
+
+    public static void main(String[] args) {
+        AuthService baseAuthService = new BaseAuthService();
+        Server server = new Server(baseAuthService);
+        server.start();
+    }
+
+    private void start() {
+        while (true) {
             try {
-                serv.close();
+                Socket clientSocket = serverSocket.accept();
+                ClientHandler clientHandler = new ClientHandler(clientSocket, this);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private static void scanConsole() {
-        while (true) {
-            String msg = consoleScanner.nextLine();
-            if (msg != null && !msg.isEmpty()) {
-                pw.println("Server: " + msg);
-                if (msg.equals("end")) break;
-            }
+    public void sendBroadcastMessage(String msg) {
+        for (ClientHandler client : clients) {
+            client.sendMessage(msg);
         }
+    }
+
+    public AuthService getAuthService() {
+        return authService;
+    }
+
+    public boolean isNickTaken(String nick) {
+        for (ClientHandler client : clients) {
+            if (nick.equals(client.getNick()))
+                return true;
+        }
+        return false;
+    }
+
+    public void subscribe(ClientHandler clientHandler) {
+        String msg = "Клиент " + clientHandler.getNick() + " подключился";
+        sendBroadcastMessage(msg);
+        System.out.println(msg);
+        clients.add(clientHandler);
+    }
+
+    public void unsubscribe(ClientHandler clientHandler) {
+        String msg = "Клиент " + clientHandler.getNick() + " отключился";
+        sendBroadcastMessage(msg);
+        System.out.println(msg);
+        clients.remove(clientHandler);
     }
 }
