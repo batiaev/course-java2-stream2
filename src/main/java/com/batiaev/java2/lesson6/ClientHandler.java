@@ -23,15 +23,30 @@ public class ClientHandler {
                 auth();
                 System.out.println(nick + " handler waiting for new massages");
                 while (socket.isConnected()) {
-                    String s = sc.nextLine();
-                    if (s != null && s.equals("/exit"))
-                        server.unsubscribe(this);
-                    if (s != null && !s.isEmpty())
-                        server.sendBroadcastMessage(nick + " : " + s);
+                    String s = sc.nextLine().trim();
+                    if (s != null) {
+                        if (s.equals("/exit"))
+                            server.unsubscribe(this);
+                        else if (s.startsWith("/w ")) {
+                            sendPrivateMessage(s.substring(3).trim());
+                        } else if (!s.isEmpty())
+                            server.sendBroadcastMessage(nick + " : " + s);
+                    }
                 }
             }).start();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void sendPrivateMessage(String messageWithNickTo) {
+        int firstSpaceIndex = messageWithNickTo.indexOf(" ");
+        String nickTo = messageWithNickTo.substring(0, firstSpaceIndex);
+        String message = messageWithNickTo.substring(firstSpaceIndex).trim();
+        if (server.isNickTaken(nickTo)) {
+            server.sendPrivateMessage(nick, nickTo, nick + " -> " + nickTo + " : " + message);
+        } else {
+            sendMessage(nickTo + " not taken!");
         }
     }
 
