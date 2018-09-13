@@ -82,4 +82,13 @@ public class Server {
         System.out.println(msg);
         clients.remove(clientHandler);
     }
+
+    public void sendPrivateMessage(String nickFrom, String nickTo, String message) {
+        for (ClientHandler client : clients) {
+            if (client.getNick().equals(nickTo)
+                    || client.getNick().equals(nickFrom)) {
+                client.sendMessage(message);
+            }
+        }
+    }
 }

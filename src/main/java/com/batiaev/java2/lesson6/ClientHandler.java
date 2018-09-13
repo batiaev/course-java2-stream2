@@ -24,14 +24,28 @@ public class ClientHandler {
                 System.out.println(nick + " handler waiting for new massages");
                 while (socket.isConnected()) {
                     String s = sc.nextLine();
-                    if (s != null && s.equals("/exit"))
+                    if (s == null) continue;
+                    if (s.equals("/exit"))
                         server.unsubscribe(this);
-                    if (s != null && !s.isEmpty())
+                    else if (s.startsWith("/w "))
+                        sendPrivateMessage(s.substring(3).trim());
+                    else if (!s.isEmpty())
                         server.sendBroadcastMessage(nick + " : " + s);
                 }
             }).start();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void sendPrivateMessage(String messageWithNickTo) {
+        int firstSpaceIndex = messageWithNickTo.indexOf(" ");
+        final String nickTo = messageWithNickTo.substring(0, firstSpaceIndex);
+        final String message = messageWithNickTo.substring(firstSpaceIndex).trim();
+        if (server.isNickTaken(nickTo)) {
+            server.sendPrivateMessage(nick, nickTo, nick + " -> " + nickTo + " : " + message);
+        } else {
+            sendMessage(nickTo + " not taken!");
         }
     }
 
