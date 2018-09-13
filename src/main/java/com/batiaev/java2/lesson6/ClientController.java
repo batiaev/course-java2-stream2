@@ -23,7 +23,7 @@ public class ClientController implements Controller {
     public void showUI(ClientUI ui) {
         this.ui = ui;
         ui.showUI();
-        sendMessage("/auth login" + index + " pass" + index);
+        //sendMessage("/auth login" + index + " pass" + index);
     }
 
     private void initConnection() {
@@ -57,7 +57,7 @@ public class ClientController implements Controller {
     @Override
     public void closeConnection() {
         try {
-            sendMessage("/exit");
+            sendMessage(Client.commands.get(Client.commandID.EXIT));
             sock.close();
             out.close();
             in.close();

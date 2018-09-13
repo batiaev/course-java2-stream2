@@ -15,10 +15,30 @@ public class BaseAuthService implements AuthService {
     @Override
     public String authByLoginAndPassword(String login, String password) {
         for (User user : users) {
-            if (login.equals(user.getLogin())
+            if (login.equalsIgnoreCase(user.getLogin())
                     && password.equals(user.getPassword()))
                 return user.getNickname();
         }
         return null;
     }
+
+    @Override
+    public String regNewUser(String login, String password, String nick) {
+        StringBuilder output = new StringBuilder();
+        for (User user : users){
+            if (login.equalsIgnoreCase(user.getLogin())){
+                output.append("Логин " + login + " уже существует. ");
+            }
+            if (nick.equalsIgnoreCase((user.getNickname()))) {
+                output.append("Псевдоним(ник) " + nick + " уже существует");
+            }
+        }
+        if (output.length() == 0){
+            users.add(new User(login, password, nick));
+            return null;
+        }
+        return output.toString();
+    }
+
+
 }

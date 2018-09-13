@@ -4,12 +4,24 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.*;
 
 public class Client extends JFrame implements ClientUI {
 
     private JTextField jtf;
     private JTextArea jta;
     private Controller controller;
+
+    public enum commandID {HELP, AUTH, REG, WHISP, USERS, EXIT}
+
+    public static final Map<commandID, String> commands = new HashMap<commandID, String>() {{
+        put(commandID.HELP, "/help");
+        put(commandID.AUTH, "/auth");
+        put(commandID.REG, "/reg");
+        put(commandID.WHISP, "/w");
+        put(commandID.USERS, "/users");
+        put(commandID.EXIT, "/exit");
+    }};
 
     public Client(Controller controller) {
 
@@ -47,7 +59,21 @@ public class Client extends JFrame implements ClientUI {
 
     private void sendMsg() {
         if (!jtf.getText().trim().isEmpty()) {
-            controller.sendMessage(jtf.getText());
+            if (jtf.getText().startsWith(Client.commands.get(commandID.HELP))) {
+                addMessage("Доступные команды:\n" +
+                           "/auth [login] [password] - подключиться к серверу используя свои [login] и [password];\n" +
+                           "/reg [login] [password] [nick] - зарегистрироваться на сервере;\n" +
+                           "/w [nick] [message] - приватное сообщение пользователю с укзанным [nick];\n" +
+                           "/users - показывает участников, которые онлайн в данный момент времени;\n" +
+                           "/exit - выход из чата;\n" +
+                           "/help - отображение доступных команд\n");
+            } else if (jtf.getText().startsWith(Client.commands.get(commandID.EXIT))){
+                controller.closeConnection();
+                Runtime.getRuntime().exit(0);
+            }
+            else {
+                controller.sendMessage(jtf.getText());
+            }
             jtf.setText("");
             jtf.grabFocus();
         }

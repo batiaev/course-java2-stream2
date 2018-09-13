@@ -36,14 +36,14 @@ public class Server {
 
     public static void main(String[] args) {
         AuthService baseAuthService = new BaseAuthService();
-        Server server = new Server(baseAuthService);
+        Server      server          = new Server(baseAuthService);
         server.start();
     }
 
     private void start() {
         while (true) {
             try {
-                Socket clientSocket = serverSocket.accept();
+                Socket        clientSocket  = serverSocket.accept();
                 ClientHandler clientHandler = new ClientHandler(clientSocket, this);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -57,6 +57,13 @@ public class Server {
         }
     }
 
+    public void sendMessageTo(String nickFrom, String nickTo, String msg) {
+        for (ClientHandler client : clients) {
+            if (client.getNick().equalsIgnoreCase(nickTo) || client.getNick().equalsIgnoreCase(nickFrom))
+                client.sendMessage(msg);
+        }
+    }
+
     public AuthService getAuthService() {
         return authService;
     }
@@ -67,6 +74,16 @@ public class Server {
                 return true;
         }
         return false;
+    }
+
+    public void getUsersOnline(String nick) {
+        StringBuilder online = new StringBuilder();
+        for (ClientHandler client : clients) {
+            if (online.length() > 0)
+                online.append(", ");
+            online.append(client.getNick());
+        }
+        sendMessageTo(nick, nick, "Сейчас на сервере: " + online.toString());
     }
 
     public void subscribe(ClientHandler clientHandler) {
