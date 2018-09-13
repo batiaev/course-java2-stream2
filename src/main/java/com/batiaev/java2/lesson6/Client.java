@@ -65,18 +65,18 @@ public class Client extends JFrame implements ClientUI {
                            "/reg [login] [password] [nick] - зарегистрироваться на сервере;\n" +
                            "/w [nick] [message] - приватное сообщение пользователю с укзанным [nick];\n" +
                            "/users - показывает участников, которые онлайн в данный момент времени;\n" +
-                           "/exit - отключение от сервера;\n" +
+                           "/exit - выход из чата;\n" +
                            "/help - отображение доступных команд\n");
-            } else {
+            } else if (jtf.getText().startsWith(Client.commands.get(commandID.EXIT))){
+                controller.closeConnection();
+                Runtime.getRuntime().exit(0);
+            }
+            else {
                 controller.sendMessage(jtf.getText());
             }
             jtf.setText("");
             jtf.grabFocus();
         }
-    }
-
-    private void checkCommand(String msg) {
-
     }
 
     @Override

@@ -26,18 +26,17 @@ public class ClientHandler {
                     String s = sc.nextLine();
                     if (s != null && s.equals(Client.commands.get(Client.commandID.EXIT)))
                         server.unsubscribe(this);
-                    if (s != null && !s.isEmpty()) {
-                        if (s.startsWith(Client.commands.get(Client.commandID.WHISP))){
+                    else if (s != null && !s.isEmpty()) {
+                        if (s.startsWith(Client.commands.get(Client.commandID.WHISP))) {
                             String[] commands = s.split(" ");// /w nick message
                             if (commands.length >= 3) {
-                                String reciverNick = commands[1];
+                                String nickTo  = commands[1];
                                 String message = commands[2];
-                                server.sendMessageTo(reciverNick, nick + " : " + message);
+                                server.sendMessageTo(nick, nickTo, nick + " : " + message);
                             }
-                        } else if (s.startsWith(Client.commands.get(Client.commandID.USERS))){
+                        } else if (s.startsWith(Client.commands.get(Client.commandID.USERS))) {
                             server.getUsersOnline(nick);
-                        }
-                        else {
+                        } else {
                             server.sendBroadcastMessage(nick + " : " + s);
                         }
 
@@ -82,13 +81,13 @@ public class ClientHandler {
                         break;
                     }
                 }
-            } else if (s.startsWith(Client.commands.get(Client.commandID.REG))){
+            } else if (s.startsWith(Client.commands.get(Client.commandID.REG))) {
                 String[] commands = s.split(" ");// /reg login password nick
                 if (commands.length >= 3) {
-                    String newLogin = commands[1];
+                    String newLogin    = commands[1];
                     String newPassword = commands[2];
-                    String newNick = commands[3];
-                    String response = server.getAuthService().regNewUser(newLogin, newPassword, newNick);
+                    String newNick     = commands[3];
+                    String response    = server.getAuthService().regNewUser(newLogin, newPassword, newNick);
                     if (response != null)
                         pw.println(response);
                     else {

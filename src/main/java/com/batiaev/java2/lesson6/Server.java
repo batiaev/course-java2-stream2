@@ -57,9 +57,9 @@ public class Server {
         }
     }
 
-    public void sendMessageTo(String nick, String msg) {
+    public void sendMessageTo(String nickFrom, String nickTo, String msg) {
         for (ClientHandler client : clients) {
-            if (client.getNick().equalsIgnoreCase(nick))
+            if (client.getNick().equalsIgnoreCase(nickTo) || client.getNick().equalsIgnoreCase(nickFrom))
                 client.sendMessage(msg);
         }
     }
@@ -83,7 +83,7 @@ public class Server {
                 online.append(", ");
             online.append(client.getNick());
         }
-        sendMessageTo(nick, "Сейчас на сервере: " + online.toString());
+        sendMessageTo(nick, nick, "Сейчас на сервере: " + online.toString());
     }
 
     public void subscribe(ClientHandler clientHandler) {
