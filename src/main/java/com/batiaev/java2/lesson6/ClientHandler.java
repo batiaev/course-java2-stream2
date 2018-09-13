@@ -24,10 +24,24 @@ public class ClientHandler {
                 System.out.println(nick + " handler waiting for new massages");
                 while (socket.isConnected()) {
                     String s = sc.nextLine();
-                    if (s != null && s.equals("/exit"))
+                    if (s != null && s.equals(Client.commands.get(Client.commandID.EXIT)))
                         server.unsubscribe(this);
-                    if (s != null && !s.isEmpty())
-                        server.sendBroadcastMessage(nick + " : " + s);
+                    if (s != null && !s.isEmpty()) {
+                        if (s.startsWith(Client.commands.get(Client.commandID.WHISP))){
+                            String[] commands = s.split(" ");// /w nick message
+                            if (commands.length >= 3) {
+                                String reciverNick = commands[1];
+                                String message = commands[2];
+                                server.sendMessageTo(reciverNick, nick + " : " + message);
+                            }
+                        } else if (s.startsWith(Client.commands.get(Client.commandID.USERS))){
+                            server.getUsersOnline(nick);
+                        }
+                        else {
+                            server.sendBroadcastMessage(nick + " : " + s);
+                        }
+
+                    }
                 }
             }).start();
         } catch (IOException e) {
@@ -42,10 +56,10 @@ public class ClientHandler {
         while (true) {
             if (!sc.hasNextLine()) continue;
             String s = sc.nextLine();
-            if (s.startsWith("/auth")) {
+            if (s.startsWith(Client.commands.get(Client.commandID.AUTH))) {
                 String[] commands = s.split(" ");// /auth login1 pass1
                 if (commands.length >= 3) {
-                    String login = commands[1];
+                    String login    = commands[1];
                     String password = commands[2];
                     System.out.println("Try to login with " + login + " and " + password);
                     String nick = server.getAuthService()
@@ -64,6 +78,26 @@ public class ClientHandler {
                         System.out.println(msg);
                         pw.println(msg);
                         server.subscribe(this);
+
+                        break;
+                    }
+                }
+            } else if (s.startsWith(Client.commands.get(Client.commandID.REG))){
+                String[] commands = s.split(" ");// /reg login password nick
+                if (commands.length >= 3) {
+                    String newLogin = commands[1];
+                    String newPassword = commands[2];
+                    String newNick = commands[3];
+                    String response = server.getAuthService().regNewUser(newLogin, newPassword, newNick);
+                    if (response != null)
+                        pw.println(response);
+                    else {
+                        this.nick = newNick;
+                        String msg = "Reg & auth ok!";
+                        System.out.println(msg);
+                        pw.println(msg);
+                        server.subscribe(this);
+
                         break;
                     }
                 }
