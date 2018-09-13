@@ -6,13 +6,13 @@ import com.batiaev.java2.lesson7.BaseAuthService;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Server {
     private ServerSocket serverSocket;
     private AuthService authService;
-    private List<ClientHandler> clients = new ArrayList<>();
+    private Map<String, ClientHandler> clients = new HashMap<>();
 
     public Server(AuthService authService) {
         this.authService = authService;
@@ -52,7 +52,7 @@ public class Server {
     }
 
     public void sendBroadcastMessage(String msg) {
-        for (ClientHandler client : clients) {
+        for (ClientHandler client : clients.values()) {
             client.sendMessage(msg);
         }
     }
@@ -62,33 +62,29 @@ public class Server {
     }
 
     public boolean isNickTaken(String nick) {
-        for (ClientHandler client : clients) {
-            if (nick.equals(client.getNick()))
-                return true;
-        }
-        return false;
+        return clients.containsKey(nick);
     }
 
     public void subscribe(ClientHandler clientHandler) {
         String msg = "Клиент " + clientHandler.getNick() + " подключился";
         sendBroadcastMessage(msg);
         System.out.println(msg);
-        clients.add(clientHandler);
+        clients.put(clientHandler.getNick(), clientHandler);
     }
 
     public void unsubscribe(ClientHandler clientHandler) {
         String msg = "Клиент " + clientHandler.getNick() + " отключился";
         sendBroadcastMessage(msg);
         System.out.println(msg);
-        clients.remove(clientHandler);
+        clients.remove(clientHandler.getNick());
     }
 
     public void sendPrivateMessage(String nickFrom, String nickTo, String message) {
-        for (ClientHandler client : clients) {
-            if (client.getNick().equals(nickTo)
-                    || client.getNick().equals(nickFrom)) {
-                client.sendMessage(message);
-            }
-        }
+        ClientHandler fromClient = clients.get(nickFrom);
+        if (fromClient != null)
+            fromClient.sendMessage(message);
+
+        if (clients.containsKey(nickTo))
+            clients.get(nickTo).sendMessage(message);
     }
 }
