@@ -23,6 +23,11 @@ public class ClientController implements Controller {
     public void showUI(ClientUI ui) {
         this.ui = ui;
         ui.showUI();
+//        try {
+//            Thread.sleep(10000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         sendMessage("/auth login" + index + " pass" + index);
     }
 

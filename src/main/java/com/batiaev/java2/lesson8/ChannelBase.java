@@ -32,7 +32,9 @@ public class ChannelBase implements Channel {
     public Message getMessage() {
         String s = sc.nextLine();
         if (s == null || s.trim().isEmpty()) return null;
-        if (s.equals("/exit"))
+        if (s.startsWith("/auth ")) {
+            return Message.authMsg(s);
+        } else if (s.equals("/exit"))
             return new Message(MessageType.EXIT_COMMAND, "");
         else if (s.startsWith("/w "))
             return new Message(MessageType.PRIVATE_MESSAGE, s.substring(3).trim());

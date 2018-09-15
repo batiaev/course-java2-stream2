@@ -19,7 +19,10 @@ public class ClientHandler {
         try {
             channel = ChannelBase.of(socket);
             new Thread(() -> {
-                auth();
+
+                if (waitAuth(socket)) {
+                    return;
+                }
                 System.out.println(nick + " handler waiting for new massages");
                 while (socket.isConnected()) {
                     Message msg = channel.getMessage();
@@ -38,6 +41,31 @@ public class ClientHandler {
                     }
                 }
             }).start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private boolean waitAuth(Socket socket) {
+        Thread authThread = new Thread(() -> auth());
+        authThread.start();
+        try {
+            authThread.join(120000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        if (nick == null) {
+            sendMessage("Timeout error auth");
+            System.out.println("Timeout error auth");
+            closeSocket(socket);
+            return false;
+        }
+        return true;
+    }
+
+    private void closeSocket(Socket socket) {
+        try {
+            socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
