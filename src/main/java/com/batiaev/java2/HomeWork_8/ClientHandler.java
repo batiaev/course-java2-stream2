@@ -45,10 +45,10 @@ public class ClientHandler {
                 } else {
                     System.out.println("not authorized");
 
-                    //Если пользователь не авторизовался, (пока не придумал ничего другого)
-                    // запускается цикл проверяющий продолжительность подключения.
-                    while (System.currentTimeMillis() - current < TIME_OUT) {
-                        // ???
+                    try {
+                        Thread.sleep(TIME_OUT);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
 
                     // После превышения таймаута, сокет закрывается.
