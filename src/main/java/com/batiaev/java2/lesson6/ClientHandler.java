@@ -12,6 +12,7 @@ public class ClientHandler {
     private Server server;
     private String nick;
     private Channel channel;
+    private static final int MILSEC_TO_DISCONNECT = 5000; // time to disconnect in milliseconds
 
     public ClientHandler(Socket socket, Server server) {
         this.server = server;
@@ -19,7 +20,25 @@ public class ClientHandler {
         try {
             channel = ChannelBase.of(socket);
             new Thread(() -> {
-                auth();
+                Thread authorization = new Thread(()->auth());
+                authorization.start();
+                try {
+                    authorization.join(MILSEC_TO_DISCONNECT);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (nick == null){
+                    sendMessage("Вы не авторизовались в течении " + MILSEC_TO_DISCONNECT/1000 +
+                                " секунд и будете отключены от сервера.");
+                    channel.sendMessage(new Message(MessageType.EXIT_COMMAND,""));
+                    System.out.println("Authorization time out. Disconnect");
+                    try {
+                        socket.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    return;
+                }
                 System.out.println(nick + " handler waiting for new massages");
                 while (socket.isConnected()) {
                     Message msg = channel.getMessage();
