@@ -41,6 +41,12 @@ public class ClientController implements Controller {
                     if (in.hasNext()) {
                         String w = in.nextLine();
                         if (w.startsWith("end session")) break;
+                        if (w.startsWith("EXIT")) {
+                            Thread.sleep(2000);
+                            System.out.println("close chat window");
+                            Runtime.getRuntime().exit(0);
+                            break;
+                        }
                         ui.addMessage(w);
                     }
                 }
