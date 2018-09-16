@@ -12,7 +12,7 @@ public class ClientHandler {
     private Server server;
     private String nick;
     private Channel channel;
-    private static final int MILSEC_TO_DISCONNECT = 5000; // time to disconnect in milliseconds
+    private static final int MILSEC_TO_DISCONNECT = 120000; // time to disconnect in milliseconds
 
     public ClientHandler(Socket socket, Server server) {
         this.server = server;
