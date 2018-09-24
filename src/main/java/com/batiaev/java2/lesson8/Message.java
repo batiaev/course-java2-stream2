@@ -1,8 +1,9 @@
 package com.batiaev.java2.lesson8;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Message {
+public class Message implements Serializable {
     private MessageType type;
     private String body;
 

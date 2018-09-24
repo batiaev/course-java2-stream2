@@ -1,9 +1,6 @@
 package com.batiaev.java2.lesson8;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
 
@@ -21,6 +18,15 @@ public class ChannelBase implements Channel {
                 socket.getInputStream(),
                 socket.getOutputStream()
         );
+    }
+
+    public void sendMessage(Object message) {
+        if (message instanceof Serializable) {
+            pw.print(message);
+        } else {
+            throw new IllegalArgumentException(
+                    "message is not serializable");
+        }
     }
 
     @Override

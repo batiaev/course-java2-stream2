@@ -1,5 +1,7 @@
 package com.batiaev.java2.lesson6;
 
+import com.batiaev.java2.lesson8.AuthMessage;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -31,6 +33,18 @@ public class Client extends JFrame implements ClientUI {
         jtf = new JTextField();
         bottomPanel.add(jtf, BorderLayout.CENTER);
 
+        JTextField loginField = new JTextField();
+        JTextField passwordField = new JTextField();
+        JButton jbAuth = new JButton("AUTH");
+        bottomPanel.add(loginField);
+        bottomPanel.add(passwordField);
+        bottomPanel.add(jbAuth);
+        jbAuth.addActionListener(e -> {
+            String login = loginField.getText();
+            String password = passwordField.getText();
+            AuthMessage authMessage = new AuthMessage(login, password);
+            sendMsg(authMessage);
+        });
 
         jbSend.addActionListener(e -> sendMsg());
         jtf.addActionListener(e -> sendMsg());
@@ -43,6 +57,10 @@ public class Client extends JFrame implements ClientUI {
                 controller.closeConnection();
             }
         });
+    }
+
+    private void sendMsg(AuthMessage authMessage) {
+        controller.sendMessage(authMessage);
     }
 
     private void sendMsg() {

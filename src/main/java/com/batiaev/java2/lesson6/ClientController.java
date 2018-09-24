@@ -1,5 +1,7 @@
 package com.batiaev.java2.lesson6;
 
+import com.batiaev.java2.lesson8.Message;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -23,7 +25,14 @@ public class ClientController implements Controller {
     public void showUI(ClientUI ui) {
         this.ui = ui;
         ui.showUI();
+
+//        Message message = new AuthMessage();
         sendMessage("/auth login" + index + " pass" + index);
+    }
+
+    @Override
+    public void sendMessage(Message authMessage) {
+        out.println(authMessage.toString());
     }
 
     private void initConnection() {
