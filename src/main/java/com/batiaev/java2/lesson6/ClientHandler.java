@@ -5,16 +5,22 @@ import com.batiaev.java2.lesson8.ChannelBase;
 import com.batiaev.java2.lesson8.Message;
 import com.batiaev.java2.lesson8.MessageType;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.net.Socket;
+import java.time.LocalDateTime;
 
-public class ClientHandler {
+public class ClientHandler implements Closeable {
     private Server server;
+    private Socket socket;
     private String nick;
     private Channel channel;
+    private LocalDateTime connectTime;
 
     public ClientHandler(Socket socket, Server server) {
         this.server = server;
+        this.socket = socket;
+        connectTime = LocalDateTime.now();
 
         try {
             channel = ChannelBase.of(socket);
@@ -98,5 +104,18 @@ public class ClientHandler {
 
     public String getNick() {
         return nick;
+    }
+
+    @Override
+    public void close() throws IOException {
+        socket.close();
+    }
+
+    public boolean isActive() {
+        return nick != null;
+    }
+
+    public LocalDateTime getConnectTime() {
+        return connectTime;
     }
 }
