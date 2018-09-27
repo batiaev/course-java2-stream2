@@ -83,7 +83,7 @@ public class ClientController implements Controller {
         }
         for (int i = history.size() - 1;0<= i; i--)
         {
-            sendMessage(history.get(i));
+            ui.addMessage(history.get(i));
         }
 
     }
