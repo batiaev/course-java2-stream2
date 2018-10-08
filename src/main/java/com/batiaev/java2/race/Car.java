@@ -40,7 +40,6 @@ public class Car  implements Runnable{
             System.out.printf("%s  - выиграл гонку \n", name);
         }
             MainClass.FINISH.countDown();
-            MainClass.FINISH.await();
 
         } catch (Exception e) {
             e.printStackTrace();

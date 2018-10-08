@@ -31,12 +31,10 @@ public class MainClass {
         }
         System.out.println("ВАЖНОЕ ОБЪЯВЛЕНИЕ >>> Гонка началась!!!");
         READY_TO_GO.countDown();
-        while (FINISH.getCount() > 0 ){
-            try {
-                Thread.sleep(100);
-            }catch (InterruptedException iex){
-                iex.printStackTrace();
-            }
+        try {
+            FINISH.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
         System.out.println("ВАЖНОЕ ОБЪЯВЛЕНИЕ >>> Гонка закончилась!!!");
     }
